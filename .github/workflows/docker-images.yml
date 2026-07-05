@@ -38,6 +38,7 @@ jobs:
           - mytelegram-gateway-server
           - mytelegram-auth-server
           - mytelegram-data-seeder
+          - mytelegram-bot-server
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -31,3 +31,6 @@ services:
 
   sms-sender:
     image: ghcr.io/${GHCR_OWNER:-nloveuser}/mytelegram-sms-sender:${MyTelegramVersion:-latest}
+
+  bot-server:
+    image: ghcr.io/${GHCR_OWNER:-nloveuser}/mytelegram-bot-server:${MyTelegramVersion:-latest}
