@@ -19,7 +19,7 @@ internal sealed class GetChannelsHandler(IChatConverterService chatConverterServ
         var channelIds = new List<long>();
         foreach (var inputChannel in obj.Id)
         {
-            if (inputChannel is TInputChannel tInputChannel)
+            if (inputChannel.NormalizeInputChannel() is TInputChannel tInputChannel)
             {
                 channelIds.Add(tInputChannel.ChannelId);
             }
@@ -36,6 +36,6 @@ internal sealed class GetChannelsHandler(IChatConverterService chatConverterServ
         }
 
         RpcErrors.RpcErrors400.ChannelInvalid.ThrowRpcError();
-        throw new NotImplementedException();
+        return null!;
     }
 }

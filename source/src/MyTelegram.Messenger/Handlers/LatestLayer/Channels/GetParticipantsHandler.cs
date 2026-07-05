@@ -17,6 +17,7 @@ internal sealed class GetParticipantsHandler(IQueryProcessor queryProcessor, ICh
 {
     protected override async Task<IChannelParticipants> HandleCoreAsync(IRequestInput input, RequestGetParticipants obj)
     {
+        obj.Channel = obj.Channel.NormalizeInputChannel();
         if (obj.Channel is TInputChannel inputChannel)
         {
             var channelReadModel = await channelAppService.GetAsync(inputChannel.ChannelId);
@@ -138,6 +139,7 @@ internal sealed class GetParticipantsHandler(IQueryProcessor queryProcessor, ICh
             return chatConverterService.ToChannelParticipants(input, channelReadModel, photoReadModel, participantCount, channelMemberReadModels, users, input.DeviceType, forceNotLeft, input.Layer);
         }
 
-        throw new NotImplementedException();
+        RpcErrors.RpcErrors400.ChannelIdInvalid.ThrowRpcError();
+        return null!;
     }
 }

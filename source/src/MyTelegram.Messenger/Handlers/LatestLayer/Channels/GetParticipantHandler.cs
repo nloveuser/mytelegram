@@ -20,6 +20,7 @@ internal sealed class GetParticipantHandler(IQueryProcessor queryProcessor, IPee
     protected override async Task<MyTelegram.Schema.Channels.IChannelParticipant> HandleCoreAsync(IRequestInput input, RequestGetParticipant obj)
     {
         var peer = peerHelper.GetPeer(obj.Participant, input.UserId);
+        obj.Channel = obj.Channel.NormalizeInputChannel();
         if (obj.Channel is TInputChannel inputChannel)
         {
             var channelMemberReadModel = await queryProcessor.ProcessAsync(new GetChannelMemberByUserIdQuery(inputChannel.ChannelId, peer.PeerId));
@@ -37,6 +38,7 @@ internal sealed class GetParticipantHandler(IQueryProcessor queryProcessor, IPee
             return r;
         }
 
-        throw new NotImplementedException();
+        RpcErrors.RpcErrors400.ChannelIdInvalid.ThrowRpcError();
+        return null!;
     }
 }

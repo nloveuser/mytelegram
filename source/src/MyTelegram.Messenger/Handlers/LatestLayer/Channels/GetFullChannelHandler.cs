@@ -18,6 +18,7 @@ internal sealed class GetFullChannelHandler(IQueryProcessor queryProcessor, //IL
 {
     protected override async Task<MyTelegram.Schema.Messages.IChatFull> HandleCoreAsync(IRequestInput input, MyTelegram.Schema.Channels.RequestGetFullChannel obj)
     {
+        obj.Channel = obj.Channel.NormalizeInputChannel();
         if (obj.Channel is TInputChannel inputChannel)
         {
             var channelId = inputChannel.ChannelId;
@@ -106,7 +107,8 @@ internal sealed class GetFullChannelHandler(IQueryProcessor queryProcessor, //IL
             return chatFull;
         }
 
-        throw new NotImplementedException();
+        RpcErrors.RpcErrors400.ChannelIdInvalid.ThrowRpcError();
+        return null!;
     }
 
     private async Task SetRecentRequestersAsync(IRequestInput input, ILayeredChannelFull layeredChannelFull, MyTelegram.Schema.Messages.IChatFull chatFull)

@@ -30,6 +30,7 @@ internal sealed class GetChannelDifferenceHandler(IMessageAppService messageAppS
     private readonly ILogger<GetChannelDifferenceHandler> _logger = logger;
     protected override async Task<MyTelegram.Schema.Updates.IChannelDifference> HandleCoreAsync(IRequestInput input, MyTelegram.Schema.Updates.RequestGetChannelDifference obj)
     {
+        obj.Channel = obj.Channel.NormalizeInputChannel();
         if (obj.Channel is TInputChannel inputChannel)
         {
             var isChannelMember = true;
@@ -66,6 +67,7 @@ internal sealed class GetChannelDifferenceHandler(IMessageAppService messageAppS
             return r;
         }
 
-        throw new NotImplementedException();
+        RpcErrors.RpcErrors400.ChannelIdInvalid.ThrowRpcError();
+        return null!;
     }
 }
