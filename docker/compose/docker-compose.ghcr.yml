@@ -1,0 +1,33 @@
+# Override that points the 6 open-source services at images built on GitHub
+# (GitHub Container Registry) instead of the default `mytelegram/` Docker Hub prefix.
+#
+# The closed-source `session-server` and `file-server` are intentionally NOT
+# overridden here: they keep pulling from `${MyTelegramRegistry}` (Docker Hub
+# `mytelegram/` by default), because there is no open-source build for them.
+#
+# Usage (from docker/compose):
+#   export GHCR_OWNER=nloveuser        # your GitHub owner, lowercase
+#   docker login ghcr.io               # images are private to your account by default
+#   docker compose -f docker-compose.yml -f docker-compose.ghcr.yml up
+#
+# To make the images public instead (no docker login needed), set each package's
+# visibility to Public under GitHub -> Packages.
+
+services:
+  data-seeder:
+    image: ghcr.io/${GHCR_OWNER:-nloveuser}/mytelegram-data-seeder:${MyTelegramVersion:-latest}
+
+  gateway-server:
+    image: ghcr.io/${GHCR_OWNER:-nloveuser}/mytelegram-gateway-server:${MyTelegramVersion:-latest}
+
+  auth-server:
+    image: ghcr.io/${GHCR_OWNER:-nloveuser}/mytelegram-auth-server:${MyTelegramVersion:-latest}
+
+  messenger-command-server:
+    image: ghcr.io/${GHCR_OWNER:-nloveuser}/mytelegram-messenger-command-server:${MyTelegramVersion:-latest}
+
+  messenger-query-server:
+    image: ghcr.io/${GHCR_OWNER:-nloveuser}/mytelegram-messenger-query-server:${MyTelegramVersion:-latest}
+
+  sms-sender:
+    image: ghcr.io/${GHCR_OWNER:-nloveuser}/mytelegram-sms-sender:${MyTelegramVersion:-latest}
