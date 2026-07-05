@@ -19,6 +19,7 @@ internal sealed class DeleteHistoryHandler(IQueryProcessor queryProcessor, IComm
 {
     protected override async Task<IUpdates> HandleCoreAsync(IRequestInput input, RequestDeleteHistory obj)
     {
+        obj.Channel = obj.Channel.NormalizeInputChannel();
         if (obj.Channel is TInputChannel inputChannel)
         {
             if (obj.ForEveryone)
@@ -35,7 +36,8 @@ internal sealed class DeleteHistoryHandler(IQueryProcessor queryProcessor, IComm
             return null !;
         }
 
-        throw new NotImplementedException();
+        RpcErrors.RpcErrors400.ChannelIdInvalid.ThrowRpcError();
+        return null!;
     }
 
     private async Task DeleteChannelHistoryForEveryoneAsync(long channelId, IRequestInput input)

@@ -17,6 +17,7 @@ internal sealed class ToggleSlowModeHandler(ICommandBus commandBus, IChannelAdmi
 {
     protected override async Task<IUpdates> HandleCoreAsync(IRequestInput input, RequestToggleSlowMode obj)
     {
+        obj.Channel = obj.Channel.NormalizeInputChannel();
         if (obj.Channel is TInputChannel inputChannel)
         {
             await channelAdminRightsChecker.CheckAdminRightAsync(obj.Channel, input.UserId, p => p.ChangeInfo);
@@ -25,6 +26,7 @@ internal sealed class ToggleSlowModeHandler(ICommandBus commandBus, IChannelAdmi
             return null!;
         }
 
-        throw new NotImplementedException();
+        RpcErrors.RpcErrors400.ChannelIdInvalid.ThrowRpcError();
+        return null!;
     }
 }

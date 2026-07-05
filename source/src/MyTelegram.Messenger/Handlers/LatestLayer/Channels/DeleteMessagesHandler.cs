@@ -17,6 +17,7 @@ internal sealed class DeleteMessagesHandler(ICommandBus commandBus, IPtsHelper p
 {
     protected override async Task<IAffectedMessages> HandleCoreAsync(IRequestInput input, MyTelegram.Schema.Channels.RequestDeleteMessages obj)
     {
+        obj.Channel = obj.Channel.NormalizeInputChannel();
         if (obj.Channel is TInputChannel inputChannel)
         {
             if (obj.Id.Count > 0)
@@ -63,6 +64,7 @@ internal sealed class DeleteMessagesHandler(ICommandBus commandBus, IPtsHelper p
             };
         }
 
-        throw new NotImplementedException();
+        RpcErrors.RpcErrors400.ChannelIdInvalid.ThrowRpcError();
+        return null!;
     }
 }

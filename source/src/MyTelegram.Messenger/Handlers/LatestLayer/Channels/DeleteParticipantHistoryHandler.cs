@@ -18,6 +18,7 @@ internal sealed class DeleteParticipantHistoryHandler(IQueryProcessor queryProce
 {
     protected override async Task<IAffectedHistory> HandleCoreAsync(IRequestInput input, RequestDeleteParticipantHistory obj)
     {
+        obj.Channel = obj.Channel.NormalizeInputChannel();
         if (obj.Channel is TInputChannel inputChannel)
         {
             await channelAdminRightsChecker.CheckAdminRightAsync(inputChannel.ChannelId, input.UserId, rights => rights.DeleteMessages, RpcErrors.RpcErrors403.ChatAdminRequired);
@@ -39,6 +40,7 @@ internal sealed class DeleteParticipantHistoryHandler(IQueryProcessor queryProce
             };
         }
 
-        throw new NotImplementedException();
+        RpcErrors.RpcErrors400.ChannelIdInvalid.ThrowRpcError();
+        return null!;
     }
 }

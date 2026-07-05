@@ -38,6 +38,7 @@ internal sealed class EditAdminHandler(ICommandBus commandBus, IChannelAppServic
 {
     protected override async Task<IUpdates> HandleCoreAsync(IRequestInput input, MyTelegram.Schema.Channels.RequestEditAdmin obj)
     {
+        obj.Channel = obj.Channel.NormalizeInputChannel();
         if (obj.Channel is TInputChannel inputChannel)
         {
             var channelReadModel = await channelAppService.GetAsync(inputChannel.ChannelId);
@@ -140,6 +141,7 @@ internal sealed class EditAdminHandler(ICommandBus commandBus, IChannelAppServic
             return null!;
         }
 
-        throw new NotImplementedException();
+        RpcErrors.RpcErrors400.ChannelIdInvalid.ThrowRpcError();
+        return null!;
     }
 }

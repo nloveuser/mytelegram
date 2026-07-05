@@ -20,6 +20,7 @@ internal sealed class LeaveChannelHandler(IPeerHelper peerHelper, ICommandBus co
 {
     protected override async Task<IUpdates> HandleCoreAsync(IRequestInput input, RequestLeaveChannel obj)
     {
+        obj.Channel = obj.Channel.NormalizeInputChannel();
         if (obj.Channel is TInputChannel inputChannel)
         {
             var channel = peerHelper.GetChannel(obj.Channel);
@@ -28,6 +29,7 @@ internal sealed class LeaveChannelHandler(IPeerHelper peerHelper, ICommandBus co
             return null!;
         }
 
-        throw new NotImplementedException();
+        RpcErrors.RpcErrors400.ChannelIdInvalid.ThrowRpcError();
+        return null!;
     }
 }

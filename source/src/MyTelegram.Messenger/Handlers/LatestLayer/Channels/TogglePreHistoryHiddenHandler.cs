@@ -19,6 +19,7 @@ internal sealed class TogglePreHistoryHiddenHandler(ICommandBus commandBus, ICha
 {
     protected override async Task<IUpdates> HandleCoreAsync(IRequestInput input, RequestTogglePreHistoryHidden obj)
     {
+        obj.Channel = obj.Channel.NormalizeInputChannel();
         if (obj.Channel is TInputChannel inputChannel)
         {
             await channelAdminRightsChecker.ThrowIfNotChannelOwnerAsync(obj.Channel, input.UserId);
@@ -27,6 +28,7 @@ internal sealed class TogglePreHistoryHiddenHandler(ICommandBus commandBus, ICha
             return null!;
         }
 
-        throw new NotImplementedException();
+        RpcErrors.RpcErrors400.ChannelIdInvalid.ThrowRpcError();
+        return null!;
     }
 }

@@ -17,6 +17,7 @@ internal sealed class ToggleParticipantsHiddenHandler(ICommandBus commandBus, IC
 {
     protected override async Task<IUpdates> HandleCoreAsync(IRequestInput input, RequestToggleParticipantsHidden obj)
     {
+        obj.Channel = obj.Channel.NormalizeInputChannel();
         if (obj.Channel is TInputChannel inputChannel)
         {
             await channelAdminRightsChecker.CheckAdminRightAsync(inputChannel.ChannelId, input.UserId, p => p.ChangeInfo, RpcErrors.RpcErrors403.ChatAdminRequired);
@@ -25,6 +26,7 @@ internal sealed class ToggleParticipantsHiddenHandler(ICommandBus commandBus, IC
             return null!;
         }
 
-        throw new NotImplementedException();
+        RpcErrors.RpcErrors400.ChannelIdInvalid.ThrowRpcError();
+        return null!;
     }
 }

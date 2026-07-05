@@ -27,6 +27,7 @@ internal sealed class JoinChannelHandler(ICommandBus commandBus, IChannelAppServ
 {
     protected override async Task<IUpdates> HandleCoreAsync(IRequestInput input, RequestJoinChannel obj)
     {
+        obj.Channel = obj.Channel.NormalizeInputChannel();
         if (obj.Channel is TInputChannel inputChannel)
         {
             var channelReadModel = await channelAppService.GetAsync(inputChannel.ChannelId);
@@ -67,6 +68,7 @@ internal sealed class JoinChannelHandler(ICommandBus commandBus, IChannelAppServ
             return null!;
         }
 
-        throw new NotImplementedException();
+        RpcErrors.RpcErrors400.ChannelIdInvalid.ThrowRpcError();
+        return null!;
     }
 }

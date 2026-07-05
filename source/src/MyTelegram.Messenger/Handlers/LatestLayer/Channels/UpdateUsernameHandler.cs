@@ -24,6 +24,7 @@ internal sealed class UpdateUsernameHandler(ICommandBus commandBus, IQueryProces
 {
     protected override async Task<IBool> HandleCoreAsync(IRequestInput input, MyTelegram.Schema.Channels.RequestUpdateUsername obj)
     {
+        obj.Channel = obj.Channel.NormalizeInputChannel();
         if (obj.Channel is TInputChannel inputChannel)
         {
             if (!string.IsNullOrEmpty(obj.Username))
@@ -47,6 +48,7 @@ internal sealed class UpdateUsernameHandler(ICommandBus commandBus, IQueryProces
             return new TBoolTrue();
         }
 
-        throw new NotImplementedException();
+        RpcErrors.RpcErrors400.ChannelIdInvalid.ThrowRpcError();
+        return null!;
     }
 }

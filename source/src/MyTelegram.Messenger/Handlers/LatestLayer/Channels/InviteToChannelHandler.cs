@@ -32,6 +32,7 @@ internal sealed class InviteToChannelHandler(ICommandBus commandBus, IPeerHelper
 {
     protected override async Task<IInvitedUsers> HandleCoreAsync(IRequestInput input, RequestInviteToChannel obj)
     {
+        obj.Channel = obj.Channel.NormalizeInputChannel();
         if (obj.Channel is TInputChannel inputChannel)
         {
             await channelAdminRightsChecker.CheckAdminRightAsync(obj.Channel, input.UserId, adminRights => adminRights.ChangeInfo);
@@ -60,6 +61,7 @@ internal sealed class InviteToChannelHandler(ICommandBus commandBus, IPeerHelper
             return null!;
         }
 
-        throw new NotImplementedException();
+        RpcErrors.RpcErrors400.ChannelIdInvalid.ThrowRpcError();
+        return null!;
     }
 }

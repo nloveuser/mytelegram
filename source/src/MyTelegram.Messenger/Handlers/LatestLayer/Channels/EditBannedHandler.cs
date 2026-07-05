@@ -23,6 +23,7 @@ internal sealed class EditBannedHandler(IPeerHelper peerHelper, ICommandBus comm
 {
     protected override async Task<IUpdates> HandleCoreAsync(IRequestInput input, RequestEditBanned obj)
     {
+        obj.Channel = obj.Channel.NormalizeInputChannel();
         if (obj.Channel is TInputChannel inputChannel)
         {
             var channel = peerHelper.GetChannel(obj.Channel);
@@ -41,6 +42,7 @@ internal sealed class EditBannedHandler(IPeerHelper peerHelper, ICommandBus comm
             return null !;
         }
 
-        throw new NotImplementedException();
+        RpcErrors.RpcErrors400.ChannelIdInvalid.ThrowRpcError();
+        return null!;
     }
 }

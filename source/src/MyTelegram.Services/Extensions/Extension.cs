@@ -114,13 +114,31 @@ public static class Extension
 
     public static Peer ToChannelPeer(this IInputChannel channel)
     {
-        if (channel is TInputChannel inputChannel)
+        switch (channel)
         {
-            return new Peer(PeerType.Channel, inputChannel.ChannelId/*, inputChannel.AccessHash*/);
+            case TInputChannel inputChannel:
+                return new Peer(PeerType.Channel, inputChannel.ChannelId/*, inputChannel.AccessHash*/);
+            case TInputChannelFromMessage inputChannelFromMessage:
+                return new Peer(PeerType.Channel, inputChannelFromMessage.ChannelId);
         }
 
         RpcErrors.RpcErrors400.ChannelIdInvalid.ThrowRpcError();
         return null!;
+    }
+
+    /// <summary>
+    /// Normalizes an <see cref="IInputChannel"/> so that a <see cref="TInputChannelFromMessage"/>
+    /// (which carries the channel id directly) is treated the same as a plain <see cref="TInputChannel"/>.
+    /// Other variants are returned unchanged.
+    /// </summary>
+    public static IInputChannel NormalizeInputChannel(this IInputChannel channel)
+    {
+        if (channel is TInputChannelFromMessage inputChannelFromMessage)
+        {
+            return new TInputChannel { ChannelId = inputChannelFromMessage.ChannelId };
+        }
+
+        return channel;
     }
 
     public static IMessageReplyHeader? ToMessageReplyHeader(this IInputReplyTo? inputReplyTo)
