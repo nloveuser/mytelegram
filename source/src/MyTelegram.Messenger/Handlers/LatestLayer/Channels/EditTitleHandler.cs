@@ -19,14 +19,15 @@ internal sealed class EditTitleHandler(ICommandBus commandBus, IRandomHelper ran
 {
     protected override async Task<IUpdates> HandleCoreAsync(IRequestInput input, RequestEditTitle obj)
     {
-        if (obj.Channel is TInputChannel inputChannel)
+        if (string.IsNullOrEmpty(obj.Title))
         {
-            await channelAdminRightsChecker.CheckAdminRightAsync(obj.Channel, input.UserId, adminRights => adminRights.ChangeInfo);
-            var command = new EditChannelTitleCommand(ChannelId.Create(inputChannel.ChannelId), input.ToRequestInfo(), obj.Title, new TMessageActionChatEditTitle { Title = obj.Title }, randomHelper.NextInt64());
-            await commandBus.PublishAsync(command, CancellationToken.None);
-            return null!;
+            RpcErrors.RpcErrors400.ChatTitleEmpty.ThrowRpcError();
         }
 
-        throw new NotImplementedException();
+        var channelId = obj.Channel.ToChannelPeer().PeerId;
+        await channelAdminRightsChecker.CheckAdminRightAsync(obj.Channel, input.UserId, adminRights => adminRights.ChangeInfo);
+        var command = new EditChannelTitleCommand(ChannelId.Create(channelId), input.ToRequestInfo(), obj.Title, new TMessageActionChatEditTitle { Title = obj.Title }, randomHelper.NextInt64());
+        await commandBus.PublishAsync(command, CancellationToken.None);
+        return null!;
     }
 }
